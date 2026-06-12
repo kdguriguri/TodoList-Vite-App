@@ -42,13 +42,9 @@ export const addTodo = createAsyncThunk(
 
 //Reducer 시작
 const initialState = {
-    todos: [
-        {
-            id: 0,
-            text: '',
-            checked: false,
-        }
-    ]
+    todos: [],
+    loading: false,
+    error: null,
 };
 
 /*
@@ -68,8 +64,17 @@ const todosSlice = createSlice({
     // extraReducer에 비동기 함수의 pending, fulfilled, rejected를 처리할 내용을 넣어준다!
     extraReducers:(builder) => {
         builder
+            .addCase(fetchAllTodos.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
             .addCase(fetchAllTodos.fulfilled , (state, action) => {
+                state.loading = false;
                 state.todos = action.payload;
+            })
+            .addCase(fetchAllTodos.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
             })
             .addCase(removeTodo.fulfilled, (state, action) => {
                 state.todos = action.payload;
